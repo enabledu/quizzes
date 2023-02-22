@@ -13,10 +13,7 @@ module default {
         required property title -> str;
         required property content -> str;
         required multi link choices -> Choice;
-        required property correct_answer :=(
-            select .choices filter .is_correct =true
-        ) 
-        required property grade -> Grade;
+        required property grades -> Grade;
     }
 
     type Choice {
@@ -36,7 +33,7 @@ module default {
     }
 
     scalar type Age extending int16{
-        constraint max_value(110);
+        constraint max_value(120);
         constraint min_value(0);
     }
 }
