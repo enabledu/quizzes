@@ -45,16 +45,43 @@ async def get_correct_answers( question_id: uuid.UUID, client: AsyncIOClient = D
 
 
 @quiz_router.post('/create')
-async def create_question(question: Question = Body(),client: AsyncIOClient = Depends(get_client)) -> UUID:
+async def create_question(question: Question  = Body(),client: AsyncIOClient = Depends(get_client)):
     """create a new question"""
-    await client.query_single(
-        f"""
-            insert Question {{
-                title := '{question.title}',
-                content := '{question.content}',
-                choices := {question.choices},
-                grade := '{question.grade}'
-            }}     
+    booleans = {"False": "false", "True": "true"}
+    print(question.choices)
+    first_choice = question.choices.pop(0)
+
+    question_id = await client.query_single(f"""
+        select(
+        insert Question {{
+            title := <str>'{question.title}',
+            content := <str>'{question.content}',
+            grade := <int16>'{question.grade}',
+            choices :=(
+                insert Choice {{
+                        content := <str>'{first_choice.content}' ,
+                        is_correct := <bool>{booleans[str(first_choice.is_correct)]}
+                    }}
+                ),
+        }}
+        ){{id}}
+    """)
+    print("????????", question_id, dir(question_id))
+    for choice in question.choices:
+        create_question_query= f"""
+        update Question filter .id = <uuid>'{question_id.id}' set {{
+                title := .title,
+                content := .content,
+                grade :=.grade,
+                choices +=(
+                    insert Choice {{
+                            content := <str>'{choice.content}' ,
+                            is_correct := <bool>{booleans[str(choice.is_correct)]}
+                        }}
+                    )
+            }} 
         """
-    )
-    return {"msg": f"create question successfully "}
+        print(create_question_query)
+        await client.query_single(create_question_query)
+
+    return {"msg": f"  Created question with id : {question_id}  "}

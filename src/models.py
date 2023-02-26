@@ -10,12 +10,12 @@ class Question(BaseModel):
     title: str
     content: str
     choices: list[Choice]
-    grade: int = Field(ge=0, le=110)
+    grade: int = Field(ge=0, le=100)
 
-    @validator('correct_answer')
-    def is_correct_answer_in_choices(cls, v, values, **kwargs):
-        if v not in values:
-            raise ValueError('the given correct answer is NOT a member of the list of choices')
+    # @validator('correct_answer')
+    # def is_correct_answer_in_choices(cls, v, values, **kwargs):
+    #     if v not in values:
+    #         raise ValueError('the given correct answer is NOT a member of the list of choices')
 
 
 class Quiz(BaseModel):

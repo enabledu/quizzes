@@ -1,3 +1,4 @@
+import pathlib
 from typing import AsyncGenerator
 from pathlib import Path
 
@@ -23,7 +24,8 @@ async def get_client() -> AsyncGenerator[edgedb.AsyncIOClient, None]:
 
 
 async def init_db():
-    with open(Path("../dbschema/default.esdl")) as f:
+    print(pathlib.Path.cwd())
+    with open(Path(pathlib.Path.cwd() / "dbschema/default.esdl")) as f:
         schema = f.read()
     try:
         await client.execute(f"""START MIGRATION TO {{ {schema} }}""")
