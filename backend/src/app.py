@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+from fastapi.responses import HTMLResponse
 
 from quizzes.backend.src.quizzes import quiz_router
 
@@ -12,3 +13,7 @@ async def root():
     return {"message": "Hello World from quizzes!"}
 
 
+@app.get("/static/default-icon.svg")
+async def router_root():
+    content = "<img src='/static/default-icon.svg'>"
+    return HTMLResponse(content=content)
