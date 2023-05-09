@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 
 from quizzes.backend.src.quizzes import quiz_router
 
@@ -10,7 +10,7 @@ app.include_router(quiz_router, prefix="/quiz", tags=["quizzes"])
 
 @app.get("/")
 async def root():
-    return {"message": "Hello World from quizzes!"}
+    return RedirectResponse(url="http://127.0.0.1:8000/quizzes/frontend/out/index.html")
 
 
 @app.get("/static/default-icon.svg")
